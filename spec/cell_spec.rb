@@ -2,41 +2,60 @@ require 'spec_helper'
 
 RSpec.describe Cell do
   before do
-    @cell = Cell.new("B4")
+    @cell = Cell.new("D2")
     @cruiser = Ship.new("Cruiser", 3)
+    @cell_1 = Cell.new("B4")
+    @cell_2 = Cell.new("C3")
   end
 
   it 'exists' do
     expect(@cell).to be_a(Cell)
   end
 
-  xit 'initializes with a coordinate' do
+  it 'initializes with a coordinate' do
     expect(@cell.coordinate).to eq("B4")
   end
 
-  xit 'has no ship by default' do
+  it 'has no ship by default' do
     expect(@cell.ship).to be_nil
   end
 
-  xit 'has no ship, so it is empty' do
+  it 'has no ship, so it is empty' do
     expect(@cell.empty?).to eq(true)
   end
 
-  xit 'can get a ship' do
+  it 'can get a ship' do
     @cell.place_ship(@cruiser)
-    expect(@cruiser.ship).to eq(cruiser)
+    expect(@cell.ship).to eq(@cruiser)
     expect(@cell.empty?).to eq(false)
   end
 
-  xit 'can tell if it has been fired upon' do
+  it 'can tell if it has been fired upon' do
     @cell.place_ship(@cruiser)
     expect(@cell.fired_upon?).to eq(false)
   end
 
-  xit 'can be fired upon' do
+  it 'can be fired upon' do
     @cell.place_ship(@cruiser)
     @cell.fire_upon 
     expect(@cell.ship.health).to eq(2)
     expect(@cell.fired_upon?).to eq(true)
   end
+
+  it 'can render differently depending on ship and fire status' do
+    expect(@cell_1.render).to eq(".")
+    @cell_1.fire_upon 
+    expect(@cell_1.render).to eq("M")
+    @cell_2.place_ship(@cruiser)
+    expect(@cell_2.render).to eq(".")
+    expect(@cell_2.render(true)).to eq("S")
+    @cell_2.fire_upon 
+    expect(@cell_2.render).to eq("H")
+    expect(@cruiser.sunk?).to eq(false)
+    @cruiser.hit
+    @cruiser.hit
+    expect(@cruiser.sunk?).to eq(true)
+    expect(@cell_2.render).to eq("X")
+  end
+
 end
