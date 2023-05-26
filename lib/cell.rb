@@ -21,7 +21,21 @@ class Cell
   end
 
   def fire_upon
-    @ship.hit 
+    @ship&.hit 
     @fire_status = true
+  end
+
+  def render(arg = false)
+    if @ship&.sunk?
+      "X"
+    elsif self.fired_upon? && !@ship
+      "M"
+    elsif @ship && !self.fired_upon? && arg == true
+      "S"
+    elsif @ship && self.fired_upon? 
+      "H"
+    else
+      "."
+    end
   end
 end
