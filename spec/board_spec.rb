@@ -11,11 +11,17 @@ RSpec.describe Board do
     expect(@board).to be_a(Board)
   end
 
-  xit 'is initialized with cells' do
+  it 'is initialized as 4x4 by default' do
     cells = @board.cells
     expect(cells).to be_a(Hash)
     expect(cells.count).to eq(16)
     expect(cells.values.first).to be_a(Cell)
+  end
+
+  it 'can have dynamic board size' do
+    board_2 = Board.new(5, 7)
+    cells = board_2.cells
+    expect(cells.count).to eq(35)
   end
 
   xit 'has valid and invalid cell coordinates' do
