@@ -11,7 +11,7 @@ RSpec.describe Board do
     expect(@board).to be_a(Board)
   end
 
-  xit 'is initialized with cells' do
+  xgit sit 'is initialized with cells' do
     cells = @board.cells
     expect(cells).to be_a(Hash)
     expect(cells.count).to eq(16)
