@@ -111,4 +111,23 @@ RSpec.describe Board do
     expect(@board.valid_placement?(@submarine, ["A1", "B1"])).to eq(false)
   end
 
+  it 'can render a row of numbered columns' do
+    expect(@board.render_number_row).to eq("  1 2 3 4 \n")
+  end
+
+  it 'can render each row of cells' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    cell_1 = @board.cells["A1"]
+    cell_1.fire_upon
+    cell_2 = @board.cells["A4"]
+    cell_2.fire_upon
+    expect(@board.render_cell_row("A")).to eq("A H . . M \n")
+    expect(@board.render_cell_row("A", true)).to eq("A H S S M \n")
+  end
+
+  it 'can render a board to terminal' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    expect(@board.render).to eq("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n")
+    expect(@board.render(true)).to eq("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n")
+  end
 end
