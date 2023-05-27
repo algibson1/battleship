@@ -28,6 +28,7 @@ class Board
 
   def valid_placement?(ship, coordinates)
     all_valid_coordinates?(coordinates) &&
+    all_unoccupied?(coordinates) &&
     length_match?(ship, coordinates) && 
     consecutive?(coordinates) && 
     not_diagonal?(coordinates)
@@ -52,6 +53,16 @@ class Board
       coordinate[0] == row_letter || coordinate[1] == column_number
     end
   end
+  
+  def unoccupied?(coordinate)
+    @cells[coordinate].empty?
+  end
+
+  def all_unoccupied?(coordinates)
+    coordinates.all? do |coordinate|
+      unoccupied?(coordinate)
+    end
+  end
 
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
@@ -60,4 +71,6 @@ class Board
       end
     end
   end
+
+
 end
