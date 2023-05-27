@@ -32,6 +32,15 @@ RSpec.describe Board do
     expect(@board.valid_coordinate?("A22")).to eq(false)
   end
 
+  it 'can check if any coordinates in range are invalid' do
+    expect(@board.all_valid_coordinates?(["A3", "A4", "A5"])).to eq(false)
+    expect(@board.all_valid_coordinates?(["A1", "A2", "A3"])).to eq(true)
+  end
+
+  it 'can not place ships with invalid coordinates' do
+    expect(@board.valid_placement?(@cruiser, ["A3", "A4", "A5"])).to eq(false)
+  end
+
   it 'checks length of coordinates vs ship' do
     expect(@board.length_match?(@cruiser, ["A1", "A2"])). to eq(false)
     expect(@board.length_match?(@cruiser, ["A1", "A1", "A3"])).to eq(true)
