@@ -1,14 +1,22 @@
 class Board
   attr_reader :cells
   def initialize(rows = 4, columns = 4)
+    @number_range = number_range(columns)
+    @letter_range = letter_range(rows)
     @cells = cell_generator(rows, columns)
   end
 
+  def number_range(columns)
+    @number_range = ("1".."#{columns}").to_a
+  end
+  
+  def letter_range(rows)
+    @letter_range = ("A".."#{(64+rows).chr}").to_a
+  end
+
   def cell_generator(rows, columns)
-    number_range = ("1".."#{columns}").to_a
-    letter_range = ("A".."#{(64+rows).chr}").to_a
-    numbers = number_range * letter_range.length
-    letters = (letter_range * number_range.length).sort
+    numbers = @number_range * @letter_range.length
+    letters = (@letter_range * @number_range.length).sort
     combos = letters.zip(numbers)
     coordinates = combos.map {|combo| combo.join}
     generated_cells = {}
@@ -72,5 +80,31 @@ class Board
     end
   end
 
+  def render(show_ships = false)
+    collector = []
+    @letter_range.each do |letter|
+      collector << render_cell_row(letter, show_ships)
+    end
+    number_row = render_number_row
+    full_board_array = collector.unshift(number_row)
+    full_board_string = full_board_array.join("")
+    full_board_string
+  end
+
+  def render_number_row
+    numbers = @number_range
+    numbers = numbers.append("\n").unshift(" ") unless numbers[0] == " "
+    number_row = numbers.join(" ")
+    number_row
+  end
+
+  def render_cell_row(letter, show_ships = false)
+    grouped = @cells.values.group_by {|cell| cell.coordinate.chr}
+    line = grouped[letter].map {|cell| cell.render(show_ships)}
+    line = line.unshift("#{letter}")
+    line = line.append("\n")
+    line = line.join(" ")
+    line
+  end
 
 end
