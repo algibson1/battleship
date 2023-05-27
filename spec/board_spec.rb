@@ -130,4 +130,8 @@ RSpec.describe Board do
     expect(@board.render).to eq("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n")
     expect(@board.render(true)).to eq("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n")
   end
+
+  # it 'can render board with ships, hits, and misses' do
+  #   do later
+  # end
 end
