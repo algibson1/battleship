@@ -92,4 +92,23 @@ RSpec.describe Board do
     expect(cell_3.ship).to eq(@cruiser)
     expect(cell_3.ship == cell_2.ship).to eq(true)
   end
+
+  it 'can check if cell is already occupied' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    expect(@board.unoccupied?("A1")).to eq(false)
+    expect(@board.unoccupied?("A2")).to eq(false)
+    expect(@board.unoccupied?("A3")).to eq(false)
+    expect(@board.unoccupied?("A4")).to eq(true)
+  end
+
+  it 'can check if all unoccupied' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    expect(@board.all_unoccupied?(["A1", "B1"])).to eq(false)
+  end
+
+  it 'cannot overlap ships' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    expect(@board.valid_placement?(@submarine, ["A1", "B1"])).to eq(false)
+  end
+
 end
