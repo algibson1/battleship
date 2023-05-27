@@ -24,7 +24,7 @@ RSpec.describe Board do
     expect(cells.count).to eq(35)
   end
 
-  xit 'has valid and invalid cell coordinates' do
+  it 'has valid and invalid cell coordinates' do
     expect(@board.valid_coordinate?("A1")).to eq(true)
     expect(@board.valid_coordinate?("D4")).to eq(true)
     expect(@board.valid_coordinate?("A5")).to eq(false)
@@ -32,25 +32,52 @@ RSpec.describe Board do
     expect(@board.valid_coordinate?("A22")).to eq(false)
   end
 
-  xit 'returns invalid if ship length does not match coordinates given' do
+  it 'can check if any coordinates in range are invalid' do
+    expect(@board.all_valid_coordinates?(["A3", "A4", "A5"])).to eq(false)
+    expect(@board.all_valid_coordinates?(["A1", "A2", "A3"])).to eq(true)
+  end
+
+  it 'can not place ships with invalid coordinates' do
+    expect(@board.valid_placement?(@cruiser, ["A3", "A4", "A5"])).to eq(false)
+  end
+
+  it 'checks length of coordinates vs ship' do
+    expect(@board.length_match?(@cruiser, ["A1", "A2"])). to eq(false)
+    expect(@board.length_match?(@cruiser, ["A1", "A1", "A3"])).to eq(true)
+  end
+
+  it 'returns invalid if ship length does not match coordinates given' do
     expect(@board.valid_placement?(@cruiser, ["A1", "A2"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["A2", "A3", "A4"])).to eq(false)
   end
 
-  xit 'returns invalid if coordinates not consecutive' do
+  it 'checks if coordinates are consecutive' do
+    expect(@board.consecutive?(["A1", "A2", "A4"])).to eq(false)
+    expect(@board.consecutive?(["A1", "A2", "A3"])).to eq(true)
+    expect(@board.consecutive?(["A3", "A2", "A1"])).to eq(false)
+    expect(@board.consecutive?(["A1", "B1", "C1"])).to eq(true)
+  end
+
+  it 'returns invalid if coordinates not consecutive' do
     expect(@board.valid_placement?(@cruiser, ["A1", "A2", "A4"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["A1", "C1"])).to eq(false)
     expect(@board.valid_placement?(@cruiser, ["A3", "A2", "A1"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["C1", "B1"])).to eq(false)
   end
 
+  it 'can check coordinates are in same column or row' do
+    expect(@board.not_diagonal?(["A1", "B2", "C3"])).to eq(false)
+    expect(@board.not_diagonal?(["C2", "D3"])).to eq(false)
+    expect(@board.not_diagonal?(["A1", "B1", "C1"])).to eq(true)
+    expect(@board.not_diagonal?(["A1", "A2", "A3"])).to eq(true)
+  end
 
-  xit 'can not place ships diagonally' do
+  it 'can not place ships diagonally' do
     expect(@board.valid_placement?(@cruiser, ["A1", "B2", "C3"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["C2", "D3"])).to eq(false)
   end
 
-  xit 'can determine if ship placement is valid' do
+  it 'can determine if ship placement is valid' do
     expect(@board.valid_placement?(@submarine, ["A1", "A2"])).to eq(true)
     expect(@board.valid_placement?(@cruiser, ["B1", "C1", "D1"])).to eq(true)
   end
