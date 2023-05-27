@@ -22,7 +22,12 @@ class Board
     @cells.keys.include?(coordinate)
   end
 
+  def all_valid_coordinates?(coordinates)
+    coordinates.all? {|coordinate| valid_coordinate?(coordinate)}
+  end
+
   def valid_placement?(ship, coordinates)
+    all_valid_coordinates?(coordinates) &&
     length_match?(ship, coordinates) && 
     consecutive?(coordinates) && 
     not_diagonal?(coordinates)
