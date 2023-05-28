@@ -49,7 +49,7 @@ class Board
   def consecutive?(coordinates)
     ordinal_values = []
     coordinates.each do |coordinate|
-      ordinal_values << coordinate[0].ord + coordinate[1].to_i
+      ordinal_values << coordinate[0].ord + coordinate[1..2].to_i
     end
     ordinal_values.each_cons(2).all? { |first_num, next_num| first_num + 1 == next_num}
   end

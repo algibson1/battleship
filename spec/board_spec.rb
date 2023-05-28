@@ -56,9 +56,10 @@ RSpec.describe Board do
     expect(@board.consecutive?(["A1", "A2", "A3"])).to eq(true)
     expect(@board.consecutive?(["A3", "A2", "A1"])).to eq(false)
     expect(@board.consecutive?(["A1", "B1", "C1"])).to eq(true)
+    expect(@board.consecutive?(["A8", "A9", "A10"])).to eq(true)
   end
 
-  it 'returns invalid if coordinates not consecutive' do
+  it 'returns invalid placement if coordinates not consecutive' do
     expect(@board.valid_placement?(@cruiser, ["A1", "A2", "A4"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["A1", "C1"])).to eq(false)
     expect(@board.valid_placement?(@cruiser, ["A3", "A2", "A1"])).to eq(false)
@@ -131,7 +132,24 @@ RSpec.describe Board do
     expect(@board.render(true)).to eq("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n")
   end
 
-  # it 'can render board with ships, hits, and misses' do
-  #   do later
-  # end
+  it 'can render board of alternate size to terminal' do
+    board_2 = Board.new(5, 7)
+    expect(board_2.render).to eq("  1 2 3 4 5 6 7 \nA . . . . . . . \nB . . . . . . . \nC . . . . . . . \nD . . . . . . . \nE . . . . . . . \n")
+  end
+
+  it 'can render board with sunken ships, hits, and misses' do
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    cell_1 = @board.cells["A1"]
+    cell_2 = @board.cells["A2"]
+    cell_3 = @board.cells["A3"]
+    cell_4 = @board.cells["B2"]
+    cell_5 = @board.cells["C3"]
+    cell_1.fire_upon 
+    cell_2.fire_upon
+    cell_4.fire_upon
+    cell_5.fire_upon
+    expect(@board.render).to eq("  1 2 3 4 \nA H H . . \nB . M . . \nC . . M . \nD . . . . \n")
+    cell_3.fire_upon 
+    expect(@board.render).to eq("  1 2 3 4 \nA X X X . \nB . M . . \nC . . M . \nD . . . . \n")
+  end
 end
