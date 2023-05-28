@@ -56,9 +56,10 @@ RSpec.describe Board do
     expect(@board.consecutive?(["A1", "A2", "A3"])).to eq(true)
     expect(@board.consecutive?(["A3", "A2", "A1"])).to eq(false)
     expect(@board.consecutive?(["A1", "B1", "C1"])).to eq(true)
+    expect(@board.consecutive?(["A8", "A9", "A10"])).to eq(true)
   end
 
-  it 'returns invalid if coordinates not consecutive' do
+  it 'returns invalid placement if coordinates not consecutive' do
     expect(@board.valid_placement?(@cruiser, ["A1", "A2", "A4"])).to eq(false)
     expect(@board.valid_placement?(@submarine, ["A1", "C1"])).to eq(false)
     expect(@board.valid_placement?(@cruiser, ["A3", "A2", "A1"])).to eq(false)
