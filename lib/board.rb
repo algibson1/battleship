@@ -56,10 +56,9 @@ class Board
 
   def not_diagonal?(coordinates)
     row_letter = coordinates.first[0]
-    column_number = coordinates.first[1]
-    coordinates.all? do |coordinate|
-      coordinate[0] == row_letter || coordinate[1] == column_number
-    end
+    column_number = coordinates.first[1..2]
+    coordinates.all? {|coordinate| coordinate[0] == row_letter} ||
+    coordinates.all? {|coordinate| coordinate[1..2] == column_number}
   end
   
   def unoccupied?(coordinate)
