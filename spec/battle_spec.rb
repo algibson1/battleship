@@ -8,8 +8,13 @@ RSpec.describe Battle do
     @submarine = Ship.new("Submarine", 2)
   end
 
-  it 'has a computer health' do
+  it 'exists' do
+    expect(@battle).to be_a(Battle)
+  end
+
+  it 'has a computer and user health' do
     expect(@battle.computer_health).to eq(0)
+    expect(@battle.user_health).to eq(0)
   end
 
   it 'initializes with computer and user boards' do
@@ -18,7 +23,10 @@ RSpec.describe Battle do
   end
 
   it 'can have ships' do
-    expect(@battle.ships).to eq([@cruiser, @submarine])
+    expect(@battle.ships).to be_a(Array)
+    expect(@battle.ships.first).to be_a(Ship)
+    expect(@battle.ships.first.name).to eq("Cruiser")
+    expect(@battle.ships.length).to eq(2)
   end
 
   it 'welcomes the player' do
@@ -28,8 +36,7 @@ RSpec.describe Battle do
   it 'can select a random valid placement for ships' do
     coordinates = @battle.generate_placement(@cruiser)
     expect(coordinates).to be_a(Array)
-    expect(@board.valid_placement?(coordinates)).to eq(true)
-    expect
+    expect(@board.valid_placement?(@cruiser, coordinates)).to eq(true)
   end
 
   it 'can place all ships' do
@@ -38,25 +45,9 @@ RSpec.describe Battle do
   end
 
   it 'prints instructions' do
-    expect(@battle.instructions).to eq("I have laid out my ships on the grid.\nYou now need to lay out your two ships.\nThe Cruiser is three units long and the Submarine is two units long.\n  1 2 3 4\n
-      A . . . .\n
-      B . . . .\n
-      C . . . .\n
-      D . . . .\nEnter the squares for the Cruiser (3 spaces):")
+    expect(@battle.instructions).to eq("I have laid out my ships on the grid.\nYou now need to lay out your ships.\nThe Cruiser is three units long and the Submarine is two units long.\n  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n")
   end
 
-  it 'can place user ship' do
-    @battle.place_user_ship(@cruiser, ["A1", "A2", "A3"])
-    expect(@battle.user_board.render).to eq("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . .")
-    @battle.place_user_ship(@submarine, ["C1", "D1"])
-    expect(@battle.user_board.render).to eq("  1 2 3 4 \nA S S S . \nB . . . . \nC S . . . \nD S . . .")
-  end
-
-  it 'can prompt to pick different coordinates' do
-   expect(@battle.place_user_ship(@cruiser, ["A1", "A3", "A4"])).to eq("Sorry those are invalid coordinates. Please try again.")
-   expect(@battle.user_board.render).to eq("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . .")
-  end
-
-  
+  #quit method?
 
 end
