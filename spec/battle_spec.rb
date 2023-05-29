@@ -55,7 +55,14 @@ RSpec.describe Battle do
     expect(@battle).to respond_to(:user_ship_placement)
   end
 
-  #quit method?
+  #test: take turn method
+  # If we break down take turn into helper methods, need to test those too
+    #Write full method first, then decide to break down to helpers if it gets long/complicated
+
+  #test: test that end game puts "You won" if computer health 0 (or ships sunk)
+      #And that it puts "I won!" if user health 0 or all ships sunk
+      #Or other message. If we personalize it
+
   #Quit method not necessary. Program will teminate itself by default unless we tell it to move to another method.
 
 end
