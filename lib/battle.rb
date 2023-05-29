@@ -21,6 +21,7 @@ class Battle
       place_computer_ships
       instructions
     elsif user_input == "q"
+
     end
   end
 
@@ -42,6 +43,7 @@ class Battle
   def instructions
     puts "I have laid out my ships on the grid.\nYou now need to lay out your ships.\nThe Cruiser is three units long and the Submarine is two units long.\n#{@user_board.render(true)}"
     user_ship_placement
+    #placeholder for take_turn method
   end
 
   def user_ship_placement
