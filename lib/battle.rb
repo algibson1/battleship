@@ -103,6 +103,18 @@ class Battle
     end
     results
   end
+
+  def display_results(user_shot, computer_shot, results)
+    puts "Your shot on #{user_shot} was a #{results[0]}"
+    puts "My shot on #{computer_shot} was a #{results[1]}"
+    puts "---"
+    if @user_board.cells[computer_shot].ship.sunk?
+      puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
+    end
+    if @computer_board.cells[user_shot].ship.sunk?
+      puts "Oh no, you sunk my #{@computer_board.cells[user_shot].ship.name}!"
+    end
+  end
   #psuedocode below
   # take turn method
   def take_turn
@@ -114,40 +126,23 @@ class Battle
       @user_board.cells[computer_shot].fire_upon
       #results
       results = calculate_results(user_shot, computer_shot)
-      puts "Your shot on #{user_shot} was a #{results[0]}"
-      puts "My shot on #{computer_shot} was a #{results[1]}"
-      puts "---"
-      if @user_board.cells[computer_shot].ship.sunk?
-        puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
-      end
-      if @computer_board.cells[user_shot].ship.sunk?
-        puts "Oh no, you sunk my #{@computer_board.cells[user_shot].ship.name}!"
-      end
+      display_results(user_shot, computer_shot, results)
       if results[0] == "hit"
         @computer_health -= 1
       end
       if results[1] == "hit"
         @user_health -= 1
       end
-
-      # Fourth: Puts the results to terminal
-      # Re-calculate computer health score. Generate array of ship health, call array.sum 
-      #recalculate user health score
-        # "Your shot on #{computer's cell} was a #{result-- miss or hit}"
-        # "My shot on #{player's cell} was a #{result -- miss or hit}"
-        # If a ship was sunk, include "(You or I, as in user or computer) sunk (your or my) #{ship}!"
-    # Repeat Loop. Run this on an until or a while loop, that ends when either user or computer health is 0
-            #Alternative: instead of using computer_health or user_health, instead use array.all? method to see if all ships sunk. 
-            # If all ships are sunk, that would also be end of game. Could eliminate the computer health and user health attributes, tests, and recalculations
-            #Coud also add a test into spec like 'can check status of ships', sink a ship, then run expects statements to see status of the ships
-
     end
+    end_game
   end
-  #End Game method
-    #If computer health is 0 (or if all computer ships sunk)
-        #"You Won!"
-    #Else 
-      # "I won!"
-    #end
-    # Returns to main menu (we called it welcome... rename?)
+
+  def end_game
+    if @computer_health == 0
+      puts "You won! Darn..."
+    else
+      puts "I won! HA! Get SUNK!"
+    end
+    welcome
+  end
 end
