@@ -27,11 +27,11 @@ RSpec.describe Ship do
   end
 
   it 'sinks when health equals 0' do
-  @cruiser.hit
-  @cruiser.hit
-  expect(@cruiser.sunk?).to eq(false)
-  @cruiser.hit
-  expect(@cruiser.health).to eq(0)
-  expect(@spec hcruiser.sunk?).to eq(true)
+    @cruiser.hit
+    @cruiser.hit
+    expect(@cruiser.sunk?).to eq(false)
+    @cruiser.hit
+    expect(@cruiser.health).to eq(0)
+    expect(@cruiser.sunk?).to eq(true)
   end
 end
