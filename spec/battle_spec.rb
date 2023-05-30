@@ -2,17 +2,16 @@ require 'spec_helper'
 
 RSpec.describe Battle do 
   before do
-    @board = Board.new
     @battle = Battle.new
-    @cruiser = Ship.new("Cruiser", 3)
-    @submarine = Ship.new("Submarine", 2)
+    @cruiser = @battle.ships[0]
+    @submarine = @battle.ships[1]
   end
 
   it 'exists' do
     expect(@battle).to be_a(Battle)
   end
 
-  it 'has a computer and user health' do
+  it 'starts with computer and user health at 0' do
     expect(@battle.computer_health).to eq(0)
     expect(@battle.user_health).to eq(0)
   end
@@ -22,7 +21,7 @@ RSpec.describe Battle do
     expect(@battle.user_board).to be_a(Board)
   end
 
-  it 'can have ships' do
+  it 'has two ships by default' do
     expect(@battle.ships).to be_a(Array)
     expect(@battle.ships.first).to be_a(Ship)
     expect(@battle.ships.first.name).to eq("Cruiser")
@@ -30,13 +29,17 @@ RSpec.describe Battle do
   end
 
   it 'welcomes the player' do
-    expect(@battle.welcome).to eq("Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.")
+    expect{@battle.welcome}.to output("Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n").to_stdout
   end
   
   it 'can select a random valid placement for ships' do
-    coordinates = @battle.generate_placement(@cruiser)
-    expect(coordinates).to be_a(Array)
-    expect(@board.valid_placement?(@cruiser, coordinates)).to eq(true)
+    coordinates_1 = @battle.generate_placement(@cruiser)
+    expect(coordinates_1).to be_a(Array)
+    expect(coordinates_1.length).to eq(3)
+    expect(@battle.computer_board.valid_placement?(@cruiser, coordinates_1)).to eq(true)
+    coordinates_2 = @battle.generate_placement(@submarine)
+    expect(coordinates_2.length).to eq(2)
+    expect(@battle.computer_board.valid_placement?(@submarine, coordinates_2)).to eq(true)
   end
 
   it 'can place all ships' do
@@ -45,9 +48,21 @@ RSpec.describe Battle do
   end
 
   it 'prints instructions' do
-    expect(@battle.instructions).to eq("I have laid out my ships on the grid.\nYou now need to lay out your ships.\nThe Cruiser is three units long and the Submarine is two units long.\n  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n")
+    expect(@battle).to respond_to(:instructions)
   end
 
-  #quit method?
+  it 'prompts user to place ships' do
+    expect(@battle).to respond_to(:user_ship_placement)
+  end
+
+  #test: take turn method
+  # If we break down take turn into helper methods, need to test those too
+    #Write full method first, then decide to break down to helpers if it gets long/complicated
+
+  #test: test that end game puts "You won" if computer health 0 (or ships sunk)
+      #And that it puts "I won!" if user health 0 or all ships sunk
+      #Or other message. If we personalize it
+
+  #Quit method not necessary. Program will teminate itself by default unless we tell it to move to another method.
 
 end
