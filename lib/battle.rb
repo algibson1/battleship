@@ -10,7 +10,8 @@ class Battle
     @user_health = 0
     @computer_board = Board.new
     @user_board = Board.new
-    @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @user_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
   end
 
   def welcome
@@ -34,7 +35,7 @@ class Battle
   end
 
   def place_computer_ships
-    @ships.each do |ship|
+    @computer_ships.each do |ship|
       @computer_board.place(ship, generate_placement(ship))
       @computer_health += ship.health
     end
@@ -47,7 +48,7 @@ class Battle
   end
 
   def user_ship_placement
-    @ships.each do |ship|
+    @user_ships.each do |ship|
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
       until @user_board.valid_placement?(ship, coordinates)
@@ -91,7 +92,7 @@ class Battle
 
   def calculate_results(user_shot, computer_shot)
     user_render = @computer_board.cells[user_shot].render
-    computer_render = @user_board.cells[computer_shot].render
+    computer_render = @user_board.cells[computer_shot].render || nil
     rendered_results = [user_render, computer_render]
     results = []
     rendered_results.each do |result|
@@ -108,10 +109,10 @@ class Battle
     puts "Your shot on #{user_shot} was a #{results[0]}"
     puts "My shot on #{computer_shot} was a #{results[1]}"
     puts "---"
-    if @user_board.cells[computer_shot].ship.sunk?
+    if @user_board.cells[computer_shot].ship&.sunk?
       puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
     end
-    if @computer_board.cells[user_shot].ship.sunk?
+    if @computer_board.cells[user_shot].ship&.sunk?
       puts "Oh no, you sunk my #{@computer_board.cells[user_shot].ship.name}!"
     end
   end
@@ -140,9 +141,22 @@ class Battle
   def end_game
     if @computer_health == 0
       puts "You won! Darn..."
-    else
-      puts "I won! HA! Get SUNK!"
+      puts "---------"
+    elsif @user_health == 0
+      puts "I won! HAHA! Get SUNK!"
+      puts "---------"
+    else 
+      puts "....Well. I guess we destroyed each other. Good game."
+      puts "---------"
     end
+    reset
     welcome
+  end
+
+  def reset
+    @computer_board = Board.new
+    @user_board = Board.new
+    @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @user_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
   end
 end
