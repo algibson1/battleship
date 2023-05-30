@@ -24,14 +24,15 @@ class Battle
     puts " |    |   \\ / __ \\|  |  |  | |  |_\\  ___/ /        \\|   Y  \\  |  |_> >"
     puts " |______  /(____  /__|  |__| |____/\\___  >_______  /|___|  /__|   __/ "
     puts "        \\/      \\/                     \\/        \\/      \\/   |__|    "
+    sleep(1)
     puts "Enter p to play. Enter q to quit."
     user_input = gets.chomp
-    if user_input == "p" 
+    if user_input == "p" || user_input "P"
       #placeholder: "customize" method. Ask player if they'd like to play a custom game or standard game. Custom choice: reassigns board size and ships. Standard choice: moves forward with the defaults we already made
-      
+      sleep(0.8)
       place_computer_ships
       set_up
-    elsif user_input == "q"
+    elsif user_input == "q" || user_input "Q"
       puts "k bye"
     elsif user_input == "play"
       puts "Really? You only had to write 'p' you know. Fine. Let's play."
@@ -41,6 +42,7 @@ class Battle
       puts "Wow. You only had to write 'q' but sure, rub it in. Leave, then."
     else 
       puts "You had very simple instructions. Just p or q."
+      sleep(2)
       welcome
     end
   end
@@ -61,13 +63,20 @@ class Battle
   end
 
   def set_up
-    puts "I have laid out my ships on the grid.\nYou now need to lay out your ships.\nThe Cruiser is three units long and the Submarine is two units long.\n#{@user_board.render(true)}"
+    puts "I have laid out my ships on the grid."
+    sleep(0.8)
+    puts "You now need to lay out your ships."
+    sleep(0.8)
+    "The Cruiser is three units long and the Submarine is two units long."
+    sleep(0.8)
+    puts "\n#{@user_board.render(true)}"
     user_ship_placement
     take_turn
   end
 
   def user_ship_placement
     @user_ships.each do |ship|
+      sleep(0.5)
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
       until @user_board.valid_placement?(ship, coordinates)
@@ -76,8 +85,11 @@ class Battle
       end
       @user_board.place(ship, coordinates)
       @user_health += ship.health
+      sleep(0.5)
       puts @user_board.render(true)
     end
+    puts "Looks good! Let's play!"
+    sleep(0.8)
   end
 
   def turn_setup
@@ -85,6 +97,7 @@ class Battle
     puts @computer_board.render
     puts "==========PLAYER BOARD=========="
     puts @user_board.render(true)
+    sleep(0.8)
     puts "Enter the coordinate for your shot:"
   end
 
@@ -125,20 +138,27 @@ class Battle
   end
 
   def display_results(user_shot, computer_shot, results)
+    sleep(0.8)
     puts "Your shot on #{user_shot} was a #{results[0]}."
+    sleep(0.8)
     puts "My shot on #{computer_shot} was a #{results[1]}."
+    sleep(0.8)
     puts "---"
+    sleep(0.3)
     if @user_board.cells[computer_shot].ship&.sunk?
       puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
+      sleep(0.8)
     end
     if @computer_board.cells[user_shot].ship&.sunk?
-      puts "Oh no, you sunk my #{@computer_board.cells[user_shot].ship.name}!"
+      puts "Oh no, you sank my #{@computer_board.cells[user_shot].ship.name}!"
+      sleep(0.8)
     end
   end
   #psuedocode below
   # take turn method
   def take_turn
     until @user_health == 0 || @computer_health == 0
+      sleep(0.8)
       turn_setup
       user_shot = gets.chomp
       fire_player_shot(user_shot)
@@ -158,6 +178,7 @@ class Battle
   end
 
   def end_game
+    sleep(0.5)
     if @computer_health == 0
       puts "You won! Darn..."
       puts "---------"
@@ -168,6 +189,9 @@ class Battle
       puts "....Well. I guess we destroyed each other. Good game."
       puts "---------"
     end
+    puts "I hope you will play again!"
+    puts "----------"
+    sleep(2)
     reset
     welcome
   end
