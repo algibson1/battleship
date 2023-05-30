@@ -3,8 +3,8 @@ require 'spec_helper'
 RSpec.describe Battle do 
   before do
     @battle = Battle.new
-    @cruiser = @battle.ships[0]
-    @submarine = @battle.ships[1]
+    @cruiser = @battle.computer_ships[0]
+    @submarine = @battle.computer_ships[1]
   end
 
   it 'exists' do
@@ -21,15 +21,15 @@ RSpec.describe Battle do
     expect(@battle.user_board).to be_a(Board)
   end
 
-  it 'has two ships by default' do
-    expect(@battle.ships).to be_a(Array)
-    expect(@battle.ships.first).to be_a(Ship)
-    expect(@battle.ships.first.name).to eq("Cruiser")
-    expect(@battle.ships.length).to eq(2)
+  it 'has two ships for computer and user by default' do
+    expect(@battle.computer_ships).to be_a(Array)
+    expect(@battle.computer_ships.first).to be_a(Ship)
+    expect(@battle.computer_ships.first.name).to eq("Cruiser")
+    expect(@battle.computer_ships.length).to eq(2)
   end
 
   it 'welcomes the player' do
-    expect{@battle.welcome}.to output("Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n").to_stdout
+    expect(@battle).to respond_to(:welcome)
   end
   
   it 'can select a random valid placement for ships' do
@@ -47,22 +47,54 @@ RSpec.describe Battle do
     expect(@battle.computer_health).to eq(5)
   end
 
-  it 'prints instructions' do
-    expect(@battle).to respond_to(:instructions)
+  it 'sets up game' do
+    expect(@battle).to respond_to(:set_up)
   end
 
   it 'prompts user to place ships' do
     expect(@battle).to respond_to(:user_ship_placement)
   end
 
-  #test: take turn method
-  # If we break down take turn into helper methods, need to test those too
-    #Write full method first, then decide to break down to helpers if it gets long/complicated
+  it 'sets up a turn' do
+    expect(@battle).to respond_to(:turn_setup)
+  end
 
-  #test: test that end game puts "You won" if computer health 0 (or ships sunk)
-      #And that it puts "I won!" if user health 0 or all ships sunk
-      #Or other message. If we personalize it
+  it 'fires player shot' do
+    expect(@battle.computer_board.cells["A1"].fired_upon?).to eq(false)
+    @battle.fire_player_shot("A1")
+    expect(@battle.computer_board.cells["A1"].fired_upon?).to eq(true)
+  end
 
-  #Quit method not necessary. Program will teminate itself by default unless we tell it to move to another method.
+  it 'generates a random computer shot' do
+    random_shot = @battle.generate_computer_shot
+    expect(random_shot).to be_a(String)
+    expect(@battle.user_board.valid_coordinate?(random_shot)).to eq(true)
+    expect(@battle.user_board.cells[random_shot].fired_upon?).to eq(false)
+  end
 
+  it 'calculates results' do
+    @battle.user_board.place(@cruiser, ["B1", "B2", "B3"])
+    @battle.computer_board.place(@submarine, ["A3", "A4"])
+    @battle.computer_board.cells["A3"].fire_upon
+    @battle.user_board.cells["A2"].fire_upon
+    results_1 = @battle.calculate_results("A3", "A2")
+    expect(results_1).to eq(["hit", "miss"])
+    @battle.computer_board.cells["A4"].fire_upon
+    @battle.user_board.cells["B2"].fire_upon
+    results_2 = @battle.calculate_results("A4", "B2")
+    expect(results_2).to eq(["hit", "hit"])
+    expect(@submarine.sunk?).to eq(true)
+  end
+
+  it 'displays results' do
+    expect{@battle.display_results("A1", "A2", ["hit", "miss"])}.to output("Your shot on A1 was a hit.\nMy shot on A2 was a miss.\n---\n").to_stdout
+  end
+
+  it 'can run a full turn' do
+    expect(@battle).to respond_to(:take_turn)
+  end
+
+  it 'has an ending' do
+    expect(@battle).to respond_to(:end_game)
+  end
 end

@@ -3,25 +3,47 @@ class Battle
               :user_health,
               :computer_board,
               :user_board,
-              :ships
+              :computer_ships,
+              :user_ships
 
   def initialize
     @computer_health = 0
     @user_health = 0
     @computer_board = Board.new
     @user_board = Board.new
-    @ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @user_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
   end
 
   def welcome
-    puts "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit."
+    puts "Welcome to "
+    sleep(1)
+    puts "__________         __    __  .__           _________.__    .__        "
+    puts "\\______   \\_____ _/  |__/  |_|  |   ____  /   _____/|  |__ |__|_____  "
+    puts " |    |  _/\\__  \\\\   __\\   __\\  | _/ __ \\ \\_____  \\ |  |  \\|  \\____ \\ "
+    puts " |    |   \\ / __ \\|  |  |  | |  |_\\  ___/ /        \\|   Y  \\  |  |_> >"
+    puts " |______  /(____  /__|  |__| |____/\\___  >_______  /|___|  /__|   __/ "
+    puts "        \\/      \\/                     \\/        \\/      \\/   |__|    "
+    sleep(1)
+    puts "Enter p to play. Enter q to quit."
     user_input = gets.chomp
-    if user_input == "p" 
+    if user_input == "p" || user_input "P"
       #placeholder: "customize" method. Ask player if they'd like to play a custom game or standard game. Custom choice: reassigns board size and ships. Standard choice: moves forward with the defaults we already made
+      sleep(0.8)
       place_computer_ships
-      instructions
-    elsif user_input == "q"
-
+      set_up
+    elsif user_input == "q" || user_input "Q"
+      puts "k bye"
+    elsif user_input == "play"
+      puts "Really? You only had to write 'p' you know. Fine. Let's play."
+      place_computer_ships
+      set_up
+    elsif user_input == "quit"
+      puts "Wow. You only had to write 'q' but sure, rub it in. Leave, then."
+    else 
+      puts "You had very simple instructions. Just p or q."
+      sleep(2)
+      welcome
     end
   end
 
@@ -34,20 +56,27 @@ class Battle
   end
 
   def place_computer_ships
-    @ships.each do |ship|
+    @computer_ships.each do |ship|
       @computer_board.place(ship, generate_placement(ship))
       @computer_health += ship.health
     end
   end
 
-  def instructions
-    puts "I have laid out my ships on the grid.\nYou now need to lay out your ships.\nThe Cruiser is three units long and the Submarine is two units long.\n#{@user_board.render(true)}"
+  def set_up
+    puts "I have laid out my ships on the grid."
+    sleep(0.8)
+    puts "You now need to lay out your ships."
+    sleep(0.8)
+    "The Cruiser is three units long and the Submarine is two units long."
+    sleep(0.8)
+    puts "\n#{@user_board.render(true)}"
     user_ship_placement
-    #placeholder for take_turn method
+    take_turn
   end
 
   def user_ship_placement
-    @ships.each do |ship|
+    @user_ships.each do |ship|
+      sleep(0.5)
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
       until @user_board.valid_placement?(ship, coordinates)
@@ -56,44 +85,121 @@ class Battle
       end
       @user_board.place(ship, coordinates)
       @user_health += ship.health
+      sleep(0.5)
       puts @user_board.render(true)
     end
+    puts "Looks good! Let's play!"
+    sleep(0.8)
   end
 
+  def turn_setup
+    puts "==========COMPUTER BOARD=========="
+    puts @computer_board.render
+    puts "==========PLAYER BOARD=========="
+    puts @user_board.render(true)
+    sleep(0.8)
+    puts "Enter the coordinate for your shot:"
+  end
+
+  def fire_player_shot(shot)
+    until @computer_board.valid_coordinate?(shot) && 
+      !@computer_board.cells[shot].fired_upon?
+      if !@computer_board.valid_coordinate?(shot)
+        puts "Please enter a valid coordinate"
+      else
+        #cannot choose a cell that has already been fired upon
+        puts "You already shot that square! Pick another:"
+      end
+      shot = gets.chomp
+    end
+    @computer_board.cells[shot].fire_upon
+  end
+
+  def generate_computer_shot
+    valid_cells = @user_board.cells.select do |coordinate, cell|
+      cell.fired_upon? == false
+    end
+    valid_cells.keys.sample
+  end
+
+  def calculate_results(user_shot, computer_shot)
+    user_render = @computer_board.cells[user_shot].render
+    computer_render = @user_board.cells[computer_shot].render || nil
+    rendered_results = [user_render, computer_render]
+    results = []
+    rendered_results.each do |result|
+      if result == "X" || result == "H"
+        results << "hit"
+      else 
+        results << "miss"
+      end
+    end
+    results
+  end
+
+  def display_results(user_shot, computer_shot, results)
+    sleep(0.8)
+    puts "Your shot on #{user_shot} was a #{results[0]}."
+    sleep(0.8)
+    puts "My shot on #{computer_shot} was a #{results[1]}."
+    sleep(0.8)
+    puts "---"
+    sleep(0.3)
+    if @user_board.cells[computer_shot].ship&.sunk?
+      puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
+      sleep(0.8)
+    end
+    if @computer_board.cells[user_shot].ship&.sunk?
+      puts "Oh no, you sank my #{@computer_board.cells[user_shot].ship.name}!"
+      sleep(0.8)
+    end
+  end
   #psuedocode below
   # take turn method
-    #Loop starts here
-    # first: render and puts both computer and player boards
-        #player board will render with (true) in order to see the ships
-    # Second: Player is prompted to choose a coordinate to fire upon (a cell method)
-        #If invalid coordinate selected, will be prompted again
-        #cannot choose a cell that has already been fired upon
-              # Generate array of already used cells by finding all cells that have a true fired_upon status
-                  #Maybe put this outside of the loop, as a collector, which we add to with each turn, instead of generating new array each time through the loop
-              # User will get 'invalid coordinate, please choose again' prompt unless they choose a valid coordinate (check against @cells.keys)
-              # User may also get alternative message: "You already fired on that coordinate" (check against array of fired upon coordinates)
-        # will need to call cell.fire_upon, which changes how the cell will render, and will decrease ship health if a ship is present
-        # Re-calculate computer health score. Generate array of ship health, call array.sum 
-    # Third: Computer selects a random coordinate to fire upon
-        #Need: array of valid coordinates, then call #select to choose random cell
-              # Generate valid_cells array by finding all cells that are not fired upon yet
-        # call #fire_upon on the randomly selected cell
-        #recalculate user health score
-    # Fourth: Puts the results to terminal
-        # "Your shot on #{computer's cell} was a #{result-- miss or hit}"
-        # "My shot on #{player's cell} was a #{result -- miss or hit}"
-        # If a ship was sunk, include "(You or I, as in user or computer) sunk (your or my) #{ship}!"
-    # Repeat Loop. Run this on an until or a while loop, that ends when either user or computer health is 0
-            #Alternative: instead of using computer_health or user_health, instead use array.all? method to see if all ships sunk. 
-            # If all ships are sunk, that would also be end of game. Could eliminate the computer health and user health attributes, tests, and recalculations
-            #Coud also add a test into spec like 'can check status of ships', sink a ship, then run expects statements to see status of the ships
+  def take_turn
+    until @user_health == 0 || @computer_health == 0
+      sleep(0.8)
+      turn_setup
+      user_shot = gets.chomp
+      fire_player_shot(user_shot)
+      computer_shot = generate_computer_shot
+      @user_board.cells[computer_shot].fire_upon
+      #results
+      results = calculate_results(user_shot, computer_shot)
+      display_results(user_shot, computer_shot, results)
+      if results[0] == "hit"
+        @computer_health -= 1
+      end
+      if results[1] == "hit"
+        @user_health -= 1
+      end
+    end
+    end_game
+  end
 
+  def end_game
+    sleep(0.5)
+    if @computer_health == 0
+      puts "You won! Darn..."
+      puts "---------"
+    elsif @user_health == 0
+      puts "I won! HAHA! Get SUNK!"
+      puts "---------"
+    else 
+      puts "....Well. I guess we destroyed each other. Good game."
+      puts "---------"
+    end
+    puts "I hope you will play again!"
+    puts "----------"
+    sleep(2)
+    reset
+    welcome
+  end
 
-  #End Game method
-    #If computer health is 0 (or if all computer ships sunk)
-        #"You Won!"
-    #Else 
-      # "I won!"
-    #end
-    # Returns to main menu (we called it welcome... rename?)
+  def reset
+    @computer_board = Board.new
+    @user_board = Board.new
+    @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @user_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+  end
 end
