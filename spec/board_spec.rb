@@ -71,6 +71,8 @@ RSpec.describe Board do
     expect(@board.not_diagonal?(["C2", "D3"])).to eq(false)
     expect(@board.not_diagonal?(["A1", "B1", "C1"])).to eq(true)
     expect(@board.not_diagonal?(["A1", "A2", "A3"])).to eq(true)
+    expect(@board.not_diagonal?(["A1", "A2", "C1"])).to eq(false)
+    expect(@board.not_diagonal?(["A1", "B1", "A3"])).to eq(false)
   end
 
   it 'can not place ships diagonally' do
