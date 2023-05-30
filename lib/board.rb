@@ -57,8 +57,8 @@ class Board
   def not_diagonal?(coordinates)
     row_letter = coordinates.first[0]
     column_number = coordinates.first[1..2]
-    coordinates.all? {|coordinate| coordinate[0] == row_letter} ||
-    coordinates.all? {|coordinate| coordinate[1..2] == column_number}
+    coordinates.all? { |coordinate| coordinate[0] == row_letter } ||
+    coordinates.all? { |coordinate| coordinate[1..2] == column_number }
   end
   
   def unoccupied?(coordinate)
@@ -98,8 +98,8 @@ class Board
   end
 
   def render_cell_row(letter, show_ships = false)
-    grouped = @cells.values.group_by {|cell| cell.coordinate.chr}
-    line = grouped[letter].map {|cell| cell.render(show_ships)}
+    grouped = @cells.values.group_by { |cell| cell.coordinate.chr }
+    line = grouped[letter].map { |cell| cell.render(show_ships) }
     line = line.unshift("#{letter}")
     line = line.append("\n")
     line = line.join(" ")
