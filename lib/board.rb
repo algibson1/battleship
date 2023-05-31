@@ -20,8 +20,8 @@ class Board
     letters = (@letter_range * @number_range.length).sort
     combos = letters.zip(numbers)
     coordinates = combos.map { |combo| combo.join }
-    generated_cells = coordinates.each_with_object({}) do |coordinate, hash|
-      hash[coordinate] = Cell.new(coordinate)
+    generated_cells = coordinates.each_with_object({}) do |coordinate, generated_cells|
+      generated_cells[coordinate] = Cell.new(coordinate)
     end
     generated_cells
   end
@@ -80,30 +80,24 @@ class Board
   end
 
   def render(show_ships = false)
-    collector = []
+    cell_rows = []
     @letter_range.each do |letter|
-      collector << render_cell_row(letter, show_ships)
+      cell_rows << render_cell_row(letter, show_ships)
     end
-    number_row = render_number_row
-    full_board_array = collector.unshift(number_row)
-    full_board_string = full_board_array.join("")
-    full_board_string
+    full_board_array = cell_rows.unshift(render_number_row)
+    full_board_array.join("")
   end
 
   def render_number_row
     numbers = @number_range
     numbers = numbers.append("\n").unshift(" ") unless numbers[0] == " "
-    number_row = numbers.join(" ")
-    number_row
+    numbers.join(" ")
   end
 
   def render_cell_row(letter, show_ships = false)
     grouped = @cells.values.group_by { |cell| cell.coordinate.chr }
-    line = grouped[letter].map { |cell| cell.render(show_ships) }
-    line = line.unshift("#{letter}")
-    line = line.append("\n")
-    line = line.join(" ")
-    line
+    rendered_cells = grouped[letter].map { |cell| cell.render(show_ships) }
+    full_line_characters = rendered_cells.unshift("#{letter}").append("\n")
+    full_line_characters.join(" ")
   end
-
 end
