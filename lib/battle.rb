@@ -24,7 +24,7 @@ class Battle
     puts " |    |   \\ / __ \\|  |  |  | |  |_\\  ___/ /        \\|   Y  \\  |  |_> >"
     puts " |______  /(____  /__|  |__| |____/\\___  >_______  /|___|  /__|   __/ "
     puts "        \\/      \\/                     \\/        \\/      \\/   |__|    "
-    `say -r 50 "Battleship"`
+    `say -r 50 -v Zarvox "Battleship"`
     sleep(1)
     puts "Enter p to play. Enter q to quit."
     user_input = gets.chomp
@@ -153,10 +153,12 @@ class Battle
     sleep(0.3)
     if @user_board.cells[computer_shot].ship&.sunk?
       puts "Get SUNK! I sank your #{@user_board.cells[computer_shot].ship.name}!"
+      `say -r 100 -v Fred "Get Sunk"`
       sleep(0.8)
     end
     if @computer_board.cells[user_shot].ship&.sunk?
       puts "Oh no, you sank my #{@computer_board.cells[user_shot].ship.name}!"
+      `say -r 100 -v Fred "Oh no"`
       sleep(0.8)
     end
   end
@@ -181,15 +183,26 @@ class Battle
   end
 
   def end_game
+
+    puts "     ________                        ________                     "
+    puts "    /  _____/_____    _____   ____   \\_____  \\___  __ ___________   "
+    puts "   /   \\  ___\\__  \\  /     \\_/ __ \\   /   |   \\  \\/ // __ \\_  __ \\  "
+    puts "   \\    \\_\\  \\/ __ \\|  Y Y  \\  ___/  /    |    \\   /\\  ___/|  | \\/  "
+    puts "    \\______  (____  /__|_|  /\\___  > \\_______  /\\_/  \\___  >__|   "
+    puts "          \\/     \\/      \\/     \\/          \\/          \\/       "
+    `say -r 40 -v Zarvox "Game Over"`
     sleep(1)
     if @computer_health == 0
       puts "You won! Darn..."
+      `say -r 100 -v Fred "Congratulations"`
       puts "---------"
     elsif @user_health == 0
       puts "I won! HAHA! Get SUNK!"
+      `say -r 100 -v Fred "Get Sunk"`
       puts "---------"
     else 
       puts "....Well. I guess we destroyed each other. Good game."
+      `say -r 100 -v Fred "A stalemate"`
       puts "---------"
     end
     sleep(2)
