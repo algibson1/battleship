@@ -14,14 +14,35 @@ class Battle
   end
 
   def welcome
-    puts "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit."
+    puts "Welcome to "
+    sleep(1)
+    puts "__________         __    __  .__           _________.__    .__        "
+    puts "\\______   \\_____ _/  |__/  |_|  |   ____  /   _____/|  |__ |__|_____  "
+    puts " |    |  _/\\__  \\\\   __\\   __\\  | _/ __ \\ \\_____  \\ |  |  \\|  \\____ \\ "
+    puts " |    |   \\ / __ \\|  |  |  | |  |_\\  ___/ /        \\|   Y  \\  |  |_> >"
+    puts " |______  /(____  /__|  |__| |____/\\___  >_______  /|___|  /__|   __/ "
+    puts "        \\/      \\/                     \\/        \\/      \\/   |__|    "
+    `say -r 50 "Battleship"`
+    sleep(1)
+    puts "Enter p to play. Enter q to quit."
     user_input = gets.chomp
-    if user_input == "p" 
-      #placeholder: "customize" method. Ask player if they'd like to play a custom game or standard game. Custom choice: reassigns board size and ships. Standard choice: moves forward with the defaults we already made
+    until user_input.downcase == "p" || user_input.downcase == "q" || user_input.downcase == "play" || user_input.downcase == "quit"
+      puts "You had very simple instructions. Just p or q."
+      user_input = gets.chomp
+    end
+    if user_input.downcase == "p"
+      sleep(0.8)
       place_computer_ships
-      instructions
-    elsif user_input == "q"
-
+      set_up
+    elsif user_input.downcase == "q"
+      puts "k bye"
+    elsif user_input.downcase == "play"
+      puts "Really? You only had to write 'p' you know. Fine. Let's play."
+      sleep(1)
+      place_computer_ships
+      set_up
+    elsif user_input.downcase == "quit"
+      puts "Wow. You only had to write 'q' but sure, rub it in. Leave, then."
     end
   end
 
