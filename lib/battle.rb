@@ -14,7 +14,7 @@ class Battle
     @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
     @user_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
   end
-
+  
   def welcome
     puts "Welcome to "
     sleep(1)
@@ -33,19 +33,27 @@ class Battle
       user_input = gets.chomp
     end
     if user_input.downcase == "p"
-      sleep(0.8)
-      place_computer_ships
-      set_up
+      puts "Awesome, let's play!"
+      play_game
     elsif user_input.downcase == "q"
       puts "k bye"
     elsif user_input.downcase == "play"
       puts "Really? You only had to write 'p' you know. Fine. Let's play."
-      sleep(1)
-      place_computer_ships
-      set_up
+      play_game
     elsif user_input.downcase == "quit"
       puts "Wow. You only had to write 'q' but sure, rub it in. Leave, then."
     end
+  end
+  
+  def play_game
+    place_computer_ships
+    sleep(1)
+    set_up
+    user_ship_placement
+    take_turn
+    end_game
+    reset
+    welcome
   end
 
   def generate_placement(ship)
@@ -70,13 +78,11 @@ class Battle
     sleep(0.8)
     "The Cruiser is three units long and the Submarine is two units long."
     sleep(0.8)
-    puts "\n#{@user_board.render(true)}"
-    user_ship_placement
-    take_turn
   end
 
   def user_ship_placement
     @user_ships.each do |ship|
+      puts @user_board.render(true)
       sleep(0.5)
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
@@ -87,7 +93,6 @@ class Battle
       @user_board.place(ship, coordinates)
       @user_health += ship.health
       sleep(0.5)
-      puts @user_board.render(true)
     end
     puts "Looks good! Let's play!"
     sleep(0.8)
@@ -102,18 +107,18 @@ class Battle
     puts "Enter the coordinate for your shot:"
   end
 
-  def fire_player_shot(shot)
-    until @computer_board.valid_coordinate?(shot) && 
-      !@computer_board.cells[shot].fired_upon?
-      if !@computer_board.valid_coordinate?(shot)
+  def fire_player_shot(pending_user_shot)
+    user_shot = pending_user_shot
+    until @computer_board.valid_coordinate?(user_shot) && !@computer_board.cells[user_shot].fired_upon?
+      if !@computer_board.valid_coordinate?(user_shot)
         puts "Please enter a valid coordinate"
       else
-        #cannot choose a cell that has already been fired upon
         puts "You already shot that square! Pick another:"
       end
-      shot = gets.chomp
+      user_shot = gets.chomp
     end
-    @computer_board.cells[shot].fire_upon
+    @computer_board.cells[user_shot].fire_upon
+    user_shot
   end
 
   def generate_computer_shot
@@ -125,7 +130,7 @@ class Battle
 
   def calculate_results(user_shot, computer_shot)
     user_render = @computer_board.cells[user_shot].render
-    computer_render = @user_board.cells[computer_shot].render || nil
+    computer_render = @user_board.cells[computer_shot].render
     rendered_results = [user_render, computer_render]
     results = []
     rendered_results.each do |result|
@@ -155,17 +160,15 @@ class Battle
       sleep(0.8)
     end
   end
-  #psuedocode below
-  # take turn method
+
   def take_turn
     until @user_health == 0 || @computer_health == 0
       sleep(0.8)
       turn_setup
-      user_shot = gets.chomp
-      fire_player_shot(user_shot)
+      pending_user_shot = gets.chomp
+      user_shot = fire_player_shot(pending_user_shot)
       computer_shot = generate_computer_shot
       @user_board.cells[computer_shot].fire_upon
-      #results
       results = calculate_results(user_shot, computer_shot)
       display_results(user_shot, computer_shot, results)
       if results[0] == "hit"
@@ -175,11 +178,10 @@ class Battle
         @user_health -= 1
       end
     end
-    end_game
   end
 
   def end_game
-    sleep(0.5)
+    sleep(1)
     if @computer_health == 0
       puts "You won! Darn..."
       puts "---------"
@@ -190,14 +192,15 @@ class Battle
       puts "....Well. I guess we destroyed each other. Good game."
       puts "---------"
     end
+    sleep(2)
     puts "I hope you will play again!"
     puts "----------"
     sleep(2)
-    reset
-    welcome
   end
 
   def reset
+    @computer_health = 0
+    @user_health = 0
     @computer_board = Board.new
     @user_board = Board.new
     @computer_ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
