@@ -31,6 +31,10 @@ RSpec.describe Battle do
   it 'welcomes the player' do
     expect(@battle).to respond_to(:welcome)
   end
+
+  it 'has a method to run all game methods' do
+    expect(@battle).to respond_to(:play_game)
+  end
   
   it 'can select a random valid placement for ships' do
     coordinates_1 = @battle.generate_placement(@cruiser)
@@ -96,5 +100,15 @@ RSpec.describe Battle do
 
   it 'has an ending' do
     expect(@battle).to respond_to(:end_game)
+  end
+
+  it 'resets the game when over' do
+    @battle.place_computer_ships
+    expect(@battle.computer_health).to eq(5)
+    @battle.computer_ships.first.hit
+    expect(@battle.computer_ships.first.health).to eq(2)
+    @battle.reset
+    expect(@battle.computer_health).to eq(0)
+    expect(@battle.computer_ships.first.health).to eq(3)
   end
 end
